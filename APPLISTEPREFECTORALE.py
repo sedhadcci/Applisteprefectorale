@@ -1,3 +1,4 @@
+import io
 import streamlit as st
 import pandas as pd
 
@@ -5,7 +6,7 @@ import pandas as pd
 @st.cache
 def load_base_data():
     base_url = "https://github.com/sedhadcci/Applisteprefectorale/raw/main/ListeprefectoralBASE.xlsx"
-    return pd.read_excel(base_url, header=None)  # Pas de noms de colonne
+    return pd.read_excel(base_url, header=None)
 
 # Fonction pour effectuer la correspondance
 def perform_lookup(input_codes, base_df):
@@ -21,12 +22,14 @@ uploaded_file = st.file_uploader("Choisissez un fichier texte avec les codes", t
 if uploaded_file:
     input_txt = uploaded_file.read().decode("utf-8")
     input_codes = input_txt.strip().split('\n')
+    
+    st.write("Codes lus du fichier : ", input_codes)  # Pour le débogage
 
     base_df = load_base_data()
-    base_df.dropna(subset=[0], inplace=True)  # Élimine les NaN de la première colonne (index 0)
+    base_df.dropna(subset=[0], inplace=True)
 
     # Spécifiez les colonnes à utiliser
-    base_columns = [0, 4, 5, 8, 18, 11, 13, 14, 21, 16]  # Colonnes par indice
+    base_columns = [0, 4, 5, 8, 18, 11, 13, 14, 21, 16]
 
     # Filtrer les colonnes
     base_df_filtered = base_df.iloc[:, base_columns]
@@ -38,9 +41,13 @@ if uploaded_file:
     st.write(result_df)
 
     # Option pour télécharger le fichier résultant
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        result_df.to_excel(writer, index=False)
+    output.seek(0)
     st.download_button(
         "Télécharger le fichier Excel après correspondance",
-        data=result_df.to_excel(index=False),
+        data=output.read(),
         file_name="resultat_correspondance.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
