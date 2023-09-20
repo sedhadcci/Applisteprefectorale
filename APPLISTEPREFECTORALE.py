@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 # Chargement du fichier de base depuis GitHub
-@st.cache
+@st.cache_data
 def load_base_data():
     base_url = "https://github.com/sedhadcci/Applisteprefectorale/raw/main/ListeprefectoralBASE.xlsx"
     return pd.read_excel(base_url, header=None)
@@ -23,8 +23,6 @@ if uploaded_file:
     input_txt = uploaded_file.read().decode("utf-8")
     input_codes = input_txt.strip().split('\n')
     
-    st.write("Codes lus du fichier : ", input_codes)  # Pour le débogage
-
     base_df = load_base_data()
     base_df.dropna(subset=[0], inplace=True)
 
@@ -43,7 +41,7 @@ if uploaded_file:
     # Option pour télécharger le fichier résultant
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        result_df.to_excel(writer, index=False)
+        result_df.to_excel(writer, index=False, sheet_name='Sheet1')
     output.seek(0)
     st.download_button(
         "Télécharger le fichier Excel après correspondance",
