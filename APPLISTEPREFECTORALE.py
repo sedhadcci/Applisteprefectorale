@@ -4,7 +4,7 @@ import pandas as pd
 # Chargement du fichier de base depuis GitHub
 @st.cache
 def load_base_data():
-    base_url = "https://github.com/votre_nom_d_utilisateur/votre_repo/raw/main/ListeprefectoralBASE.xlsx"
+    base_url = "https://github.com/sedhadcci/Applisteprefectorale/blob/main/ListeprefectoralBASE.xlsx"
     return pd.read_excel(base_url)
 
 # Fonction pour effectuer la correspondance
