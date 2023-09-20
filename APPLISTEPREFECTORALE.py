@@ -19,7 +19,12 @@ uploaded_file = st.file_uploader("Choisissez un fichier Excel", type=["xlsx"])
 
 if uploaded_file:
     input_df = pd.read_excel(uploaded_file)
+
+    # Nettoyage des données : supprimer les lignes où la colonne 'CODE' est vide
+    input_df.dropna(subset=['CODE'], inplace=True)
+    
     base_df = load_base_data()
+    base_df.dropna(subset=['CODE'], inplace=True)
 
     # Spécifiez les colonnes à utiliser
     base_columns = [0, 4, 5, 8, 18, 11, 13, 14, 21, 16]  # Par exemple, la colonne 0 pour "CODE", la colonne 4 pour "SIRET PREF", etc.
